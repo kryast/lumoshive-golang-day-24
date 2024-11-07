@@ -1,6 +1,10 @@
 package repository
 
-import "day-24/model"
+import (
+	"database/sql"
+	"day-24/model"
+	"fmt"
+)
 
 func (r *BookRepositoryDB) GetAllBooks() ([]model.Book, error) {
 	var books []model.Book
@@ -24,4 +28,21 @@ func (r *BookRepositoryDB) GetAllBooks() ([]model.Book, error) {
 	}
 
 	return books, nil
+}
+
+func (br *BookRepositoryDB) FindByID(id int) (*model.Book, error) {
+	query := `SELECT id, title, category, author, price, discount, book_cover, book_file 
+	          FROM books WHERE id = $1`
+
+	row := br.DB.QueryRow(query, id)
+
+	book := &model.Book{}
+	err := row.Scan(&book.ID, &book.Title, &book.Category, &book.Author, &book.Price, &book.Discount, &book.BookCover, &book.BookFile)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("book not found")
+		}
+		return nil, fmt.Errorf("could not scan book: %v", err)
+	}
+	return book, nil
 }

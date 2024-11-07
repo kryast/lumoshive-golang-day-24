@@ -18,14 +18,14 @@
                 </tr>
             </thead>
             <tbody>
-                {{range .Books}} <!-- Menampilkan daftar buku -->
+                {{range .Books}} 
                 <tr>
-                    <td>{{.ID}}</td> <!-- Menampilkan ID Buku -->
-                    <td>{{.Title}}</td> <!-- Menampilkan Nama Buku -->
-                    <td>{{.Category}}</td> <!-- Menampilkan Jenis Buku -->
-                    <td>{{.Author}}</td> <!-- Menampilkan Pengarang -->
-                    <td>Rp{{.Price | printf "%.2f"}}</td> <!-- Menampilkan Harga dengan format Rupiah -->
-                    <td>{{.Discount}}%</td> <!-- Menampilkan Diskon -->
+                    <td>{{.ID}}</td> 
+                    <td>{{.Title}}</td> 
+                    <td>{{.Category}}</td> 
+                    <td>{{.Author}}</td> 
+                    <td>Rp{{.Price | printf "%.2f"}}</td> 
+                    <td>{{.Discount}}%</td> 
                     <td>
                         <a href="/edit-book/{{.ID}}">Edit</a> |
                         <a href="/delete-book/{{.ID}}">Hapus</a>

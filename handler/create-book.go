@@ -24,8 +24,8 @@ func (bh *BookHandler) CreateBookHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Ambil form data
-	bookName := r.FormValue("bookName")
-	bookType := r.FormValue("bookType")
+	title := r.FormValue("title")
+	category := r.FormValue("category")
 	author := r.FormValue("author")
 	priceStr := r.FormValue("price")
 	price, err := strconv.ParseFloat(priceStr, 64)
@@ -55,8 +55,8 @@ func (bh *BookHandler) CreateBookHandler(w http.ResponseWriter, r *http.Request)
 
 	// Simpan path file ke objek book
 	book := model.Book{
-		Title:     bookName,
-		Category:  bookType,
+		Title:     title,
+		Category:  category,
 		Author:    author,
 		Price:     price,
 		Discount:  discount,
