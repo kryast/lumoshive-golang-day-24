@@ -39,7 +39,7 @@ func main() {
 	r.Get("/dashboard", handler.Home)
 	r.Get("/login", handler.FormLogin)
 	r.Get("/book-list", bookHandler.BookListHandler)
-	r.Get("/order-list", handler.OrderView)
+	r.Get("/order-list", orderHandler.OrderListHandler)
 	r.Get("/create-book", handler.FormCreateBook)
 	r.Get("/edit-book/{id}", bookHandler.FormEditBook)
 	r.Get("/logout", handler.Logout)
