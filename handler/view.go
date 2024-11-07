@@ -40,6 +40,11 @@ func FormLogin(w http.ResponseWriter, r *http.Request) {
 func Home(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "dashboard-view", nil)
 }
+
+func OrderView(w http.ResponseWriter, r *http.Request) {
+	templates.ExecuteTemplate(w, "order-list-view", nil)
+}
+
 func Logout(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "logout-view", nil)
 }

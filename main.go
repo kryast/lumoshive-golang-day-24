@@ -20,13 +20,18 @@ func main() {
 	defer db.Close()
 
 	// Inisialisasi repository, service, dan handler untuk User
-	repo := repository.NewBookRepository(db)
-	bookService := service.NewBookService(repo)
+	repoBook := repository.NewBookRepository(db)
+	bookService := service.NewBookService(repoBook)
 	bookHandler := handler.NewBookHandler(*bookService)
+
+	repoOrder := repository.NewOrderRepository(db)
+	orderService := service.NewOrderService(repoOrder)
+	orderHandler := handler.NewOrderHandler(orderService)
 
 	r := chi.NewRouter()
 	r.Use(library.MethodForm)
 
+	r.Post("/create-order", orderHandler.CreateOrderHandler)
 	r.Post("/create-book", bookHandler.CreateBookHandler)
 	r.Put("/edit-book/{id}", bookHandler.UpdateBookHandler)
 	r.Delete("/delete-book/{id}", bookHandler.DeleteBookHandler)
@@ -34,6 +39,7 @@ func main() {
 	r.Get("/dashboard", handler.Home)
 	r.Get("/login", handler.FormLogin)
 	r.Get("/book-list", bookHandler.BookListHandler)
+	r.Get("/order-list", handler.OrderView)
 	r.Get("/create-book", handler.FormCreateBook)
 	r.Get("/edit-book/{id}", bookHandler.FormEditBook)
 	r.Get("/logout", handler.Logout)

@@ -1,38 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Penjualan</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header>
-        <h1>Data Penjualan Buku</h1>
-    </header>
-
-    <section id="order-list">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nama Customer</th>
-                    <th>Nomor Order</th>
-                    <th>Status Order</th>
-                    <th>Detail Order</th>
-                    <th>Tanggal Order</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Jane Doe</td>
-                    <td>ORD123</td>
-                    <td>Completed</td>
-                    <td><a href="#">Lihat Detail</a></td>
-                    <td>2024-01-15</td>
-                </tr>
-                <!-- Data pesanan lainnya -->
-            </tbody>
-        </table>
-    </section>
-</body>
-</html>
+{{define "order-list-view"}}
+{{template "layout-view"}}
+<table>
+    <thead>
+      <tr>
+        <th>Customer Name</th>
+        <th>Order Number</th>
+        <th>Status</th>
+        <th>Details</th>
+        <th>Order Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Sales}}
+      <tr>
+        <td>{{.CustomerName}}</td>
+        <td>{{.OrderNumber}}</td>
+        <td>{{.OrderStatus}}</td>
+        <td><a href="#">Lihat Detail</a></td>
+        <td>{{.OrderDate.Format "2006-01-02"}}</td>
+      </tr>
+      {{else}}
+      <tr>
+        <td colspan="5">No sales data available</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+  {{end}}
