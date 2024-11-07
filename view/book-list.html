@@ -1,12 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Buku</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+{{define "book-list-view"}}
+{{template "layout-view"}}
     <header>
         <h1>Daftar Buku</h1>
     </header>
@@ -25,18 +18,25 @@
                 </tr>
             </thead>
             <tbody>
+                {{range .Books}} <!-- Menampilkan daftar buku -->
                 <tr>
-                    <td>001</td>
-                    <td>Belajar HTML</td>
-                    <td>Teknologi</td>
-                    <td>John Doe</td>
-                    <td>Rp100.000</td>
-                    <td>10%</td>
-                    <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
+                    <td>{{.ID}}</td> <!-- Menampilkan ID Buku -->
+                    <td>{{.Title}}</td> <!-- Menampilkan Nama Buku -->
+                    <td>{{.Category}}</td> <!-- Menampilkan Jenis Buku -->
+                    <td>{{.Author}}</td> <!-- Menampilkan Pengarang -->
+                    <td>Rp{{.Price | printf "%.2f"}}</td> <!-- Menampilkan Harga dengan format Rupiah -->
+                    <td>{{.Discount}}%</td> <!-- Menampilkan Diskon -->
+                    <td>
+                        <a href="/edit-book/{{.ID}}">Edit</a> |
+                        <a href="/delete-book/{{.ID}}">Hapus</a>
+                    </td>
                 </tr>
-                <!-- Data buku lainnya -->
+                {{else}}
+                <tr>
+                    <td colspan="7">Tidak ada buku untuk ditampilkan</td>
+                </tr>
+                {{end}}
             </tbody>
         </table>
     </section>
-</body>
-</html>
+{{end}}

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"day-24/library"
 	"day-24/model"
 	"day-24/service"
 	"fmt"
@@ -17,38 +18,59 @@ func NewBookHandler(bs service.BookService) BookHandler {
 }
 
 func (bh *BookHandler) CreateBookHandler(w http.ResponseWriter, r *http.Request) {
-
-	// Ambil nilai form dari request
-	title := r.FormValue("title")
-	author := r.FormValue("author")
-	category := r.FormValue("category")
-
-	priceStr := r.FormValue("price")
-	price, _ := strconv.ParseFloat(priceStr, 64)
-	discountStr := r.FormValue("discount")
-	discount, _ := strconv.ParseFloat(discountStr, 64)
-
-	bookCover := r.FormValue("book_cover") // Contoh jika Anda ingin menangani upload cover
-	bookFile := r.FormValue("book_file")   // Contoh jika Anda ingin menangani upload file
-
-	// Buat objek Book dengan data yang diambil dari form
-	// Pastikan data seperti price dan discount di-convert ke tipe yang sesuai jika perlu
-	book := model.Book{
-		Title:     title,
-		Author:    author,
-		Category:  category,
-		Price:     price,
-		Discount:  discount,
-		BookCover: bookCover,
-		BookFile:  bookFile,
-	}
-
-	// Panggil service untuk menyimpan data buku
-	// Jika ada kesalahan saat menyimpan, tampilkan pesan error
-	err := bh.serviceBooks.CreateBook(book)
-	if err != nil {
-		fmt.Println("error ", err)
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
+	// Ambil form data
+	bookName := r.FormValue("bookName")
+	bookType := r.FormValue("bookType")
+	author := r.FormValue("author")
+	priceStr := r.FormValue("price")
+	price, err := strconv.ParseFloat(priceStr, 64)
+	if err != nil {
+		http.Error(w, "Invalid price format", http.StatusBadRequest)
+		return
+	}
+
+	discountStr := r.FormValue("discount")
+	discount, err := strconv.ParseFloat(discountStr, 64)
+	if err != nil {
+		discount = 0 // Jika diskon tidak ada, set ke 0
+	}
+
+	coverPath, err := library.UploadFile(r, "cover", "./uploads/cover", "jpg")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error uploading cover file: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Proses file buku dengan fungsi uploadFile
+	bookFilePath, err := library.UploadFile(r, "file", "./uploads/books", "pdf")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error uploading book file: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Simpan path file ke objek book
+	book := model.Book{
+		Title:     bookName,
+		Category:  bookType,
+		Author:    author,
+		Price:     price,
+		Discount:  discount,
+		BookCover: coverPath,    // Menyimpan path cover file
+		BookFile:  bookFilePath, // Menyimpan path file buku
+	}
+
+	// Simpan ke database melalui service dan repository
+	err = bh.serviceBooks.CreateBook(book)
+	if err != nil {
+		http.Error(w, "Error creating book: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Tampilkan halaman sukses
+	templates.ExecuteTemplate(w, "dashboard-view", book)
 }
