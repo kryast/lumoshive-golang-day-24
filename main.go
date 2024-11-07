@@ -3,6 +3,7 @@ package main
 import (
 	"day-24/database"
 	"day-24/handler"
+	"day-24/library"
 	"day-24/middleware"
 	"day-24/repository"
 	"day-24/service"
@@ -36,6 +37,8 @@ func main() {
 	dashboardHandler := handler.NewDashboardHandler(dashboardService)
 
 	r := chi.NewRouter()
+
+	r.Use(library.MethodForm)
 
 	// Rute untuk Halaman Login
 	r.Get("/", handler.FormLogin)               // Form login
