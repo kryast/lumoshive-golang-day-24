@@ -15,9 +15,6 @@ func NewBookService(repo repository.BookRepositoryDB) BookService {
 }
 
 func (bs *BookService) CreateBook(book model.Book) error {
-	// Validasi input book jika perlu
-
-	// Panggil repository untuk menyimpan buku
 	err := bs.RepoBook.CreateDataBook(book)
 	if err != nil {
 		return fmt.Errorf("error creating book: %v", err)

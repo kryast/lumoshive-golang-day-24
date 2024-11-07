@@ -46,3 +46,13 @@ func (br *BookRepositoryDB) FindByID(id int) (*model.Book, error) {
 	}
 	return book, nil
 }
+
+func (r *BookRepositoryDB) GetBookCount() (int, error) {
+	var count int
+	query := "SELECT COUNT(*) FROM books"
+	err := r.DB.QueryRow(query).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get book count: %v", err)
+	}
+	return count, nil
+}

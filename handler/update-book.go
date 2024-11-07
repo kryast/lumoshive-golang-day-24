@@ -11,19 +11,15 @@ import (
 	"github.com/go-chi/chi"
 )
 
-// handler/book_handler.go
-// handler/book_handler.go
-
 func (bh *BookHandler) UpdateBookHandler(w http.ResponseWriter, r *http.Request) {
-	// Ambil ID dari URL
-	bookIDStr := chi.URLParam(r, "id") // Ambil ID dari URL
+
+	bookIDStr := chi.URLParam(r, "id")
 	bookID, err := strconv.Atoi(bookIDStr)
 	if err != nil || bookID <= 0 {
 		http.Error(w, "Invalid book ID", http.StatusBadRequest)
 		return
 	}
 
-	// Ambil data form lainnya
 	title := r.FormValue("title")
 	category := r.FormValue("category")
 	author := r.FormValue("author")
@@ -37,12 +33,11 @@ func (bh *BookHandler) UpdateBookHandler(w http.ResponseWriter, r *http.Request)
 	discountStr := r.FormValue("discount")
 	discount, err := strconv.ParseFloat(discountStr, 64)
 	if err != nil {
-		discount = 0 // Jika diskon tidak ada, set ke 0
+		discount = 0
 	}
 
-	// Cek jika ada file cover yang diupload
 	coverPath := ""
-	if _, _, err := r.FormFile("cover"); err == nil { // Hanya jika file cover ada
+	if _, _, err := r.FormFile("cover"); err == nil {
 		coverPath, err = library.UploadFile(r, "cover", "./uploads/cover", "jpg")
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Error uploading cover file: %v", err), http.StatusInternalServerError)
@@ -51,9 +46,8 @@ func (bh *BookHandler) UpdateBookHandler(w http.ResponseWriter, r *http.Request)
 	}
 	bookCover := sql.NullString{Valid: coverPath != "", String: coverPath}
 
-	// Cek jika ada file buku yang diupload
 	bookFilePath := ""
-	if _, _, err := r.FormFile("file"); err == nil { // Hanya jika file buku ada
+	if _, _, err := r.FormFile("file"); err == nil {
 		bookFilePath, err = library.UploadFile(r, "file", "./uploads/books", "pdf")
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Error uploading book file: %v", err), http.StatusInternalServerError)
@@ -62,7 +56,6 @@ func (bh *BookHandler) UpdateBookHandler(w http.ResponseWriter, r *http.Request)
 	}
 	bookFile := sql.NullString{Valid: bookFilePath != "", String: bookFilePath}
 
-	// Membuat objek book dengan data yang ada
 	book := model.Book{
 		ID:        bookID,
 		Title:     title,
@@ -70,17 +63,15 @@ func (bh *BookHandler) UpdateBookHandler(w http.ResponseWriter, r *http.Request)
 		Author:    author,
 		Price:     price,
 		Discount:  discount,
-		BookCover: bookCover, // Menyimpan path cover file jika ada
-		BookFile:  bookFile,  // Menyimpan path file buku jika ada
+		BookCover: bookCover,
+		BookFile:  bookFile,
 	}
 
-	// Panggil service untuk memperbarui data buku
 	err = bh.serviceBooks.UpdateBook(book)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error updating book: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	// Redirect ke daftar buku
 	http.Redirect(w, r, "/book-list", http.StatusSeeOther)
 }
