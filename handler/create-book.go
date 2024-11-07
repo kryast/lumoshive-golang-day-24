@@ -19,10 +19,6 @@ func NewBookHandler(bs service.BookService) BookHandler {
 }
 
 func (bh *BookHandler) CreateBookHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
 
 	// Ambil form data
 	title := r.FormValue("title")

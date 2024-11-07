@@ -22,15 +22,20 @@ func main() {
 	// Inisialisasi repository, service, dan handler untuk User
 	repoBook := repository.NewBookRepository(db)
 	bookService := service.NewBookService(repoBook)
-	bookHandler := handler.NewBookHandler(*bookService)
+	bookHandler := handler.NewBookHandler(bookService)
 
 	repoOrder := repository.NewOrderRepository(db)
 	orderService := service.NewOrderService(repoOrder)
 	orderHandler := handler.NewOrderHandler(orderService)
 
+	repoAdmin := repository.NewAdminRepository(db)
+	adminService := service.NewAdminService(repoAdmin)
+	adminHandler := handler.NewAdminHandler(adminService)
+
 	r := chi.NewRouter()
 	r.Use(library.MethodForm)
 
+	r.Post("/create-admin", adminHandler.CreateAdminHandler)
 	r.Post("/create-order", orderHandler.CreateOrderHandler)
 	r.Post("/create-book", bookHandler.CreateBookHandler)
 	r.Put("/edit-book/{id}", bookHandler.UpdateBookHandler)

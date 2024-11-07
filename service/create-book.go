@@ -10,8 +10,8 @@ type BookService struct {
 	RepoBook repository.BookRepositoryDB
 }
 
-func NewBookService(repo repository.BookRepositoryDB) *BookService {
-	return &BookService{RepoBook: repo}
+func NewBookService(repo repository.BookRepositoryDB) BookService {
+	return BookService{RepoBook: repo}
 }
 
 func (bs *BookService) CreateBook(book model.Book) error {
