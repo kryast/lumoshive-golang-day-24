@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"day-24/library"
 	"day-24/model"
 	"fmt"
@@ -48,6 +49,7 @@ func (bh *BookHandler) UpdateBookHandler(w http.ResponseWriter, r *http.Request)
 			return
 		}
 	}
+	bookCover := sql.NullString{Valid: coverPath != "", String: coverPath}
 
 	// Cek jika ada file buku yang diupload
 	bookFilePath := ""
@@ -58,6 +60,7 @@ func (bh *BookHandler) UpdateBookHandler(w http.ResponseWriter, r *http.Request)
 			return
 		}
 	}
+	bookFile := sql.NullString{Valid: bookFilePath != "", String: bookFilePath}
 
 	// Membuat objek book dengan data yang ada
 	book := model.Book{
@@ -67,8 +70,8 @@ func (bh *BookHandler) UpdateBookHandler(w http.ResponseWriter, r *http.Request)
 		Author:    author,
 		Price:     price,
 		Discount:  discount,
-		BookCover: coverPath,    // Menyimpan path cover file jika ada
-		BookFile:  bookFilePath, // Menyimpan path file buku jika ada
+		BookCover: bookCover, // Menyimpan path cover file jika ada
+		BookFile:  bookFile,  // Menyimpan path file buku jika ada
 	}
 
 	// Panggil service untuk memperbarui data buku

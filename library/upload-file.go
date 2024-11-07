@@ -10,10 +10,11 @@ import (
 
 // Fungsi untuk meng-upload file ke folder tertentu
 func UploadFile(r *http.Request, fileField string, folder string, fileExt string) (string, error) {
-	// Ambil file dari form
+	// Cek apakah file ada di form
 	file, _, err := r.FormFile(fileField)
 	if err != nil {
-		return "", fmt.Errorf("failed to get file from form: %v", err)
+		// Jika file tidak ada, kembalikan string kosong
+		return "", nil
 	}
 	defer file.Close()
 

@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type Book struct {
 	ID        int
@@ -9,8 +12,8 @@ type Book struct {
 	Author    string
 	Price     float64
 	Discount  float64
-	BookCover string
-	BookFile  string
+	BookCover sql.NullString
+	BookFile  sql.NullString
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time

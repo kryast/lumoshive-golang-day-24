@@ -28,7 +28,10 @@
                     <td>{{.Discount}}%</td> 
                     <td>
                         <a href="/edit-book/{{.ID}}">Edit</a> |
-                        <a href="/delete-book/{{.ID}}">Hapus</a>
+                        <form action="/delete-book/{{.ID}}" method="POST" style="display:inline;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit">Hapus</button>
+                        </form>
                     </td>
                 </tr>
                 {{else}}

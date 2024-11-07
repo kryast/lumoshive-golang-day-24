@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"day-24/library"
 	"day-24/model"
 	"day-24/service"
@@ -40,18 +41,23 @@ func (bh *BookHandler) CreateBookHandler(w http.ResponseWriter, r *http.Request)
 		discount = 0 // Jika diskon tidak ada, set ke 0
 	}
 
+	// Upload file cover, jika tidak ada, biarkan kosong (""), dan convert menjadi sql.NullString
 	coverPath, err := library.UploadFile(r, "cover", "./uploads/cover", "jpg")
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error uploading cover file: %v", err), http.StatusInternalServerError)
 		return
 	}
+	// Mengonversi coverPath menjadi sql.NullString
+	bookCover := sql.NullString{Valid: coverPath != "", String: coverPath}
 
-	// Proses file buku dengan fungsi uploadFile
+	// Proses file buku, jika tidak ada, biarkan kosong (""), dan convert menjadi sql.NullString
 	bookFilePath, err := library.UploadFile(r, "file", "./uploads/books", "pdf")
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error uploading book file: %v", err), http.StatusInternalServerError)
 		return
 	}
+	// Mengonversi bookFilePath menjadi sql.NullString
+	bookFile := sql.NullString{Valid: bookFilePath != "", String: bookFilePath}
 
 	// Simpan path file ke objek book
 	book := model.Book{
@@ -60,8 +66,8 @@ func (bh *BookHandler) CreateBookHandler(w http.ResponseWriter, r *http.Request)
 		Author:    author,
 		Price:     price,
 		Discount:  discount,
-		BookCover: coverPath,    // Menyimpan path cover file
-		BookFile:  bookFilePath, // Menyimpan path file buku
+		BookCover: bookCover, // Menyimpan path cover file (bisa kosong)
+		BookFile:  bookFile,  // Menyimpan path file buku (bisa kosong)
 	}
 
 	// Simpan ke database melalui service dan repository
@@ -71,6 +77,6 @@ func (bh *BookHandler) CreateBookHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Tampilkan halaman sukses
-	templates.ExecuteTemplate(w, "dashboard-view", book)
+	// Tampilkan halaman sukses atau redirect ke halaman daftar buku
+	http.Redirect(w, r, "/book-list", http.StatusSeeOther)
 }
